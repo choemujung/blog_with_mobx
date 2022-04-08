@@ -1,26 +1,60 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import PostList from './Components/PostList';
+import Category from './Components/Category';
+import { Item, getDate, NextId } from'./types_funcs';
+import blogStore from './store';
+import { observer } from 'mobx-react';
+import Write from './Components/Write';
+import Detail from './Components/Detail'
+import Main from './Components/Main';
 
-function App() {
+const sample: Item[] = [
+  {
+    id: 1,
+    title: 'js',
+    content: 'react',
+    category: '일상',
+    date: getDate(),
+  },
+  {
+    id: 2,
+    title: 'java',
+    content: 'spring',
+    category: '개발',
+    date: getDate(),
+  },
+  {
+    id: 3,
+    title: 'c#',
+    content: '.net core',
+    category: '개발',
+    date: getDate(),
+  },
+  {
+    id: 4,
+    title: 'python',
+    content: 'django',
+    category: '낙서',
+    date: getDate(),
+  },
+  {
+    id: 5,
+    title: 'node',
+    content: 'express',
+    category: '여행',
+    date: getDate(),
+  }
+]
+
+
+const App = observer(() => {
+  let posts = blogStore.posts;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Main posts={posts}></Main>
     </div>
   );
-}
+});
+
 
 export default App;
