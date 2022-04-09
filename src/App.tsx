@@ -8,50 +8,32 @@ import Write from './Components/Write';
 import Detail from './Components/Detail'
 import Main from './Components/Main';
 
-const sample: Item[] = [
-  {
-    id: 1,
-    title: 'js',
-    content: 'react',
-    category: '일상',
-    date: getDate(),
-  },
-  {
-    id: 2,
-    title: 'java',
-    content: 'spring',
-    category: '개발',
-    date: getDate(),
-  },
-  {
-    id: 3,
-    title: 'c#',
-    content: '.net core',
-    category: '개발',
-    date: getDate(),
-  },
-  {
-    id: 4,
-    title: 'python',
-    content: 'django',
-    category: '낙서',
-    date: getDate(),
-  },
-  {
-    id: 5,
-    title: 'node',
-    content: 'express',
-    category: '여행',
-    date: getDate(),
-  }
-]
-
-
 const App = observer(() => {
-  let posts = blogStore.posts;
+  let ui = blogStore.uiState;
+
+  switch(ui) {
+    case 'none': 
+      return (
+        <Main/>
+      )
+    case 'detail':
+      return (
+        <Main component={<Detail/>}/>
+      )
+    case 'write':
+      return (
+        <Main component={<Write/>}/>
+      )
+    case 'edit' :
+      return (
+        <Main component={<Write post={blogStore.selectedPost}/>}/>
+      )
+
+
+  }
   return (
     <div>
-      <Main posts={posts}></Main>
+      <Main></Main>
     </div>
   );
 });

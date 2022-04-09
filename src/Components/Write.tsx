@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Item } from '../types_funcs';
+import blogStore from '../store';
 
 
 interface Props {
@@ -47,14 +48,18 @@ const Write = observer(({ post }: Props) => {
         }
     }
 
+    const handleClickPublish = () => {
+        
+    }
+
     return (
         <div>
             <div className='header'>
                 <select defaultValue={post?.category} ref={cateRef}>
                     {Object.keys(categories).map((item, index)=><option key={index}>{item}</option>)}
                 </select>
-                <button>취소</button>
-                <button>발행</button>
+                <button onClick={()=>blogStore.closeAll()}>취소</button>
+                <button onClick={handleClickPublish}>발행</button>
             </div>
             <div>
                 <input type="text" placeholder='제목' ref={titleRef}/>

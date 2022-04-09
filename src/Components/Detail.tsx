@@ -1,22 +1,35 @@
 import { observer } from 'mobx-react';
 import React from 'react';
+import blogStore from '../store';
 import { Item } from '../types_funcs';
 
-interface Props {
-    post: Item;
-}
 
-const Detail = observer(({post}:Props) => {
+const Detail = observer(() => {
+    let post = blogStore.selectedPost;
+
+    const handleClickDelete = () => {
+        blogStore.delete(post.id);
+        blogStore.closeAll();
+    }
+
+    const handleClickEdit = () => {
+        blogStore.openEdit(post);
+    }
+    
     return (
         <div>
             <div>
-                <span>{post.category}</span><span>{post.date}</span><button>수정</button><button>삭제</button>
+                <h1>{post.category}</h1>
+                <span>{post.date}</span>
             </div>
             <div>
                 {post.title}
             </div>
             <div>
                 {post.content}
+            </div>
+            <div>
+                <button onClick={handleClickEdit}>수정</button><button onClick={handleClickDelete}>삭제</button>
             </div>
         </div>
     );
