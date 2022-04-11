@@ -40,19 +40,12 @@ const sampleItems: Item[] = [
   }
 ]
 
-const sampleCate: { [key: string]: number } = { '여행': 50, '맛집': 20, '개발': 10, '일상': 10 };
 class BlogStore {
   posts: Item[] = sampleItems;
   curPosts: Item[] = this.posts;
   categories: { [key: string]: number } = {'전체':0};
   uiState: ViewState = 'none';
-  selectedPost: Item = {
-    id: 0,
-    title: 'sdf',
-    content: 'sdf',
-    category: 'sdf',
-    date: '',
-  };
+  selectedPost?: Item;
 
   constructor() {
     makeAutoObservable(this);

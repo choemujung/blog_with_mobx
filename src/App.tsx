@@ -10,7 +10,7 @@ import Main from './Components/Main';
 
 const App = observer(() => {
   let ui = blogStore.uiState;
-
+  
   switch(ui) {
     case 'none': 
       return (
