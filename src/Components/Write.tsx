@@ -5,39 +5,65 @@ import blogStore from '../store';
 
 
 interface Props {
-    post?: Item;
+    post?:Item;
 }
-const style = {
-    resize: "none",
-}
-const Write = observer(({ post }: Props) => {
-    let categories: { [key: string]: number } = { '여행': 50, '맛집': 20, '개발': 10, '일상': 10 };
+
+const Write = observer(({post}:Props) => {
     const titleRef = useRef<HTMLInputElement>(null);
-    const cateRef = useRef<HTMLSelectElement>(null);
     const contentRef = useRef<HTMLTextAreaElement>(null);
+    const categoryRef = useRef<HTMLSelectElement>(null);
 
     useEffect(() => {
-        if (titleRef.current !== null && contentRef.current !== null && cateRef.current !== null) {
-            titleRef.current.value = '';
-            contentRef.current.value = '';
-            if (post !== undefined) {
+        if (titleRef.current !== null && contentRef.current !== null && categoryRef.current !== null) {
+            if (post) {
+                console.log(`post : ${post.title}`);
                 titleRef.current.value = post.title;
                 contentRef.current.value = post.content;
+                categoryRef.current.value = post.category;
+            } else {
+                titleRef.current.value = '';
+                contentRef.current.value = '';
+                categoryRef.current.value = blogStore.categories[0];
             }
         }
     });
 
+    /*
+    props를 넘겨받지 않고 store의 uiState를 참조하여 edit과 write의 ref를 다르게 했는데 
+    edit -> write 또는 그 역이 동작하지 않는다. 
+    */
+    // const Write = observer(() => {
+    //     let categories:string[] = blogStore.categories;
+    //     const titleRef = useRef<HTMLInputElement>(null);
+    //     const contentRef = useRef<HTMLTextAreaElement>(null);
+    //     const category = useRef<string>('');
+    
+    //     useEffect(() => {
+    //         if (titleRef.current !== null && contentRef.current !== null) {
+    //             if (blogStore.uiState === 'edit') {
+    //                 console.log(`post : ${blogStore.selectedPost.title}`)
+    //                 titleRef.current.value = blogStore.selectedPost.title;
+    //                 contentRef.current.value = blogStore.selectedPost.content;
+    //                 category.current = blogStore.selectedPost.category;
+    //             } else {
+    //                 console.log(`post : ${blogStore.selectedPost.title}`)
+    //                 titleRef.current.value = '';
+    //                 contentRef.current.value = '';
+    //                 category.current = '전체';
+    //             }
+    //         }
+    //     });
 
 
-    const handleClickPublishBtn = () => {
-        if ((titleRef.current !== null) && (contentRef.current !== null) && (cateRef.current !== null)) {
-            const [title, content, cate] = [titleRef.current.value, contentRef.current.value, cateRef.current.value];
+    const handleClickPublish = () => {
+        if ((titleRef.current !== null) && (contentRef.current !== null) && (categoryRef.current !== null)) {
+            const [title, content, category] = [titleRef.current.value, contentRef.current.value, categoryRef.current.value];
             if (title !== '') {
                 if (content !== '') {
-                    if (cateRef.current.value == '전체') {
-
+                    if (post) {
+                        blogStore.updatePost(post.id, category, title, content, post.date);
                     } else {
-
+                        blogStore.addPost(category, title, content);
                     }
                 } else {
                     alert('본문을 입력해주세요.');
@@ -48,15 +74,11 @@ const Write = observer(({ post }: Props) => {
         }
     }
 
-    const handleClickPublish = () => {
-        
-    }
-
     return (
         <div>
             <div className='header'>
-                <select defaultValue={post?.category} ref={cateRef}>
-                    {Object.keys(categories).map((item, index)=><option key={index}>{item}</option>)}
+                <select ref={categoryRef}>
+                    {blogStore.categories.map((category,index)=><option value={category} key={index}>{category}</option>)}
                 </select>
                 <button onClick={()=>blogStore.closeAll()}>취소</button>
                 <button onClick={handleClickPublish}>발행</button>
@@ -65,9 +87,8 @@ const Write = observer(({ post }: Props) => {
                 <input type="text" placeholder='제목' ref={titleRef}/>
             </div>
             <div>
-                <textarea name="" placeholder='내용' ref={contentRef}></textarea>
+                <textarea placeholder='내용' ref={contentRef}/>
             </div>
-
         </div>
     );
 });

@@ -3,18 +3,17 @@ import blogStore from '../store';
 import { Item } from '../types_funcs';
 
 
-const Detail = observer(() => {
-    const post: Item | undefined = blogStore.selectedPost;
+const Detail = observer(() => {    
+    const post: Item | undefined = blogStore.posts.find(item=>item.id === blogStore.selectedId);
 
     if (typeof post !== 'undefined') {
         const handleClickDelete = () => {
             blogStore.delete(post.id);
             blogStore.closeAll();
         }
-        // 
 
         const handleClickEdit = () => {
-            blogStore.openEdit(post);
+            blogStore.openEdit(post.id);
         }
 
         return (

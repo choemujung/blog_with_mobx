@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { observer } from 'mobx-react';
 import { Item } from '../types_funcs';
 import blogStore from '../store';
@@ -15,13 +15,13 @@ const PostItem = observer(({post}:ItemProps)=>{
     
     return (
         <div onMouseEnter={() => setHide(false)} onMouseLeave={() => setHide(true)}>
-            <span onClick={() => blogStore.openDetail(post)}>
+            <span onClick={() => blogStore.openDetail(post.id)}>
                 <span >{post.title}</span>
                 <span>{post.date}</span>
             </span>
             {!isHide && (
                     <span >
-                        <button onClick={() => blogStore.openEdit(post)}>수정</button>
+                        <button onClick={() => blogStore.openEdit(post.id)}>수정</button>
                         <button onClick={() =>{
                             blogStore.delete(post.id);
                             blogStore.closeAll();
@@ -32,13 +32,15 @@ const PostItem = observer(({post}:ItemProps)=>{
     );
 });
 
-const PostList = observer(() => {    
-    // let posts = blogStore.curPosts;
+interface ListProps {
+    posts:Item[];
+}
+
+const PostList = observer(({posts}: ListProps) => {   
     return (
         <div>
             {
-                blogStore.curPosts.map((item: Item) =>
-                    <PostItem post={item} key={item.id} />
+                posts.map((item: Item) => <PostItem post={item} key={item.id} />
                 )
             }
         </div>

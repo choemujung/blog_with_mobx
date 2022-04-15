@@ -1,6 +1,5 @@
-import { NONAME } from "dns";
 import { makeAutoObservable } from "mobx";
-import { Item, getDate, ViewState } from "./types_funcs";
+import { Item, getDate, ViewState, NextId } from "./types_funcs";
 
 const sampleItems: Item[] = [
   {
@@ -42,60 +41,78 @@ const sampleItems: Item[] = [
 
 class BlogStore {
   posts: Item[] = sampleItems;
-  curPosts: Item[] = this.posts;
-  categories: { [key: string]: number } = {'전체':0};
+  categories:string[] = [];
   uiState: ViewState = 'none';
-  selectedPost?: Item;
+  selectedId: number = -1;
 
   constructor() {
     makeAutoObservable(this);
     for(let i=0;i<this.posts.length;i++) {
-      let cate = this.posts[i].category;
-      let keys = Object.keys(this.categories);
-      if (keys.includes(cate)) {
-        this.categories[cate] += 1;
-      } else {
-        this.categories[cate] = 1;
-      }
+      let category = this.posts[i].category;
+      if (!this.categories.includes(category)) {
+        this.categories.push(category);
+      } 
     }
-    console.log(this.categories);
   }
 
+  // post 삭제
   delete = (id: number) => {
     this.posts = this.posts.filter(post => post.id !== id);
-    this.curPosts = this.curPosts.filter(post => post.id !== id);
+  }
+  get selectedPost():Item {
+    const post = this.posts.find(item=>item.id === this.selectedId);
+    if (post) {
+      return post;
+    } else {
+      const defaultPost:Item = {
+        id:0,
+        category:'',
+        title:'',
+        content:'',
+        date:'',
+      } 
+      return defaultPost;
+    }
   }
 
-  // action
-  setCurPosts = (posts:Item[]) => {
-    this.curPosts = posts;
-  }
-  readByKeyword = (keyword: string): void => {
-    this.curPosts = this.posts.filter(item => item.title.includes(keyword) || item.content.includes(keyword));
+  readByKeyword = (keyword: string): Item[] => {
+    return this.posts.filter(item => item.title.includes(keyword) || item.content.includes(keyword));
   }
 
-  readByCate = (category: string): void => {
-    this.curPosts = this.posts.filter(item => item.category == category);
+  readByCategory = (category: string): Item[] => {
+    return  this.posts.filter(item => item.category === category);
   }
 
   addCategory = (category: string) => {
-    this.categories[category] = 0;
+    this.categories.push(category);
+  }
+
+  addPost = (category:string, title:string, content:string) => {
+    const newPost:Item = {id:NextId.getId(),category,title,content,date:getDate()};
+    this.posts = [newPost, ...this.posts];
+    this.closeAll();
+  }
+
+  updatePost = (id:number, category:string, title:string, content:string, date:string) => {
+    const updatePost:Item = {id, category, title, content, date};
+    this.posts = this.posts.map(post => (post.id === id) ? updatePost : post);
+    this.closeAll();
   }
 
   openWrite = () => {
     this.uiState = 'write';
   }
 
-  openEdit = (post: Item) => {
-    this.selectedPost = post;
+  openEdit = (id: number) => {
+    this.selectedId = id;
     this.uiState = 'edit';
   }
 
-  openDetail = (post: Item) => {
+  openDetail = (id: number) => {
     if (this.uiState === 'detail') {
-      (this.selectedPost === post) ? (this.uiState = 'none') : (this.selectedPost = post);
+      (this.selectedId === id) ? (this.uiState = 'none') : (this.selectedId = id);
     } else {
-      this.selectedPost = post;
+      this.selectedId = id;
       this.uiState = 'detail';
     }
   }

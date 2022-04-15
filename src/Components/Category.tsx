@@ -1,24 +1,24 @@
 import { observer } from "mobx-react-lite"
 import { useRef } from "react";
 import blogStore from "../store";
+import { Item } from "../types_funcs";
 
-const Category = observer(() => {
-    let categories: { [key: string]: number } = blogStore.categories;
-    let keys = Object.keys(categories);
+interface Props {
+    setPosts:(posts:Item[]) => void;
+}
+
+const Category = observer(({setPosts}:Props) => {
     const textRef = useRef<HTMLInputElement>(null);
 
-
-
     const handleClickItem = (category:string) => {
-        blogStore.readByCate(category);
+        const posts = blogStore.readByCategory(category);
+        setPosts(posts);
         blogStore.closeAll();
     };
 
     const handleClickAdd = () => {
         (textRef.current !== null) && blogStore.addCategory(textRef.current.value);
-    };
-
-    
+    }; 
 
     return (
         <div>
@@ -26,10 +26,10 @@ const Category = observer(() => {
             <div>
                 <b>카테고리</b>
                 {
-                    keys.map(item =>
-                        <div onClick={()=>handleClickItem(item)}>
-                            <span>{item}</span>
-                            <span>({categories[item]})</span>
+                    blogStore.categories.map((category,index) =>
+                        <div key={index} onClick={()=>handleClickItem(category)}>
+                            <span>{category}</span>  
+                            <span>({blogStore.posts.filter(post=>post.category === category).length})</span>                      
                         </div>
                     )
                 }
