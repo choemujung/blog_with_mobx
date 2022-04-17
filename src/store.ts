@@ -55,6 +55,10 @@ class BlogStore {
     }
   }
 
+  //computed
+  get postsLength():number {
+    return this.posts.length;
+  }
   // post 삭제
   delete = (id: number) => {
     this.posts = this.posts.filter(post => post.id !== id);
@@ -75,7 +79,7 @@ class BlogStore {
     }
   }
 
-  readByKeyword = (keyword: string): Item[] => {
+  readBySearch = (keyword: string): Item[] => {
     return this.posts.filter(item => item.title.includes(keyword) || item.content.includes(keyword));
   }
 

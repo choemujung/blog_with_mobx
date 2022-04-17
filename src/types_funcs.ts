@@ -10,9 +10,8 @@ export class NextId {
     private static id:number=5;
 
     static getId(): number {
-        let nextId = this.id;
         this.id += 1;
-        return(nextId);
+        return(this.id);
     }
 }
 

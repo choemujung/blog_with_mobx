@@ -61,8 +61,10 @@ const Write = observer(({post}:Props) => {
             if (title !== '') {
                 if (content !== '') {
                     if (post) {
+                        console.log('update');
                         blogStore.updatePost(post.id, category, title, content, post.date);
                     } else {
+                        console.log('create');
                         blogStore.addPost(category, title, content);
                     }
                 } else {
