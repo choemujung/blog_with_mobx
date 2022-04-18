@@ -44,6 +44,11 @@ class BlogStore {
   categories:string[] = [];
   uiState: ViewState = 'none';
   selectedId: number = -1;
+  a:number = 0;
+
+  add = () => {
+    this.a += 1;
+  }
 
   constructor() {
     makeAutoObservable(this);
